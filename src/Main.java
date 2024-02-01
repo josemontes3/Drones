@@ -6,36 +6,53 @@ public class Main {
         boolean exit = false;
 
         do {
-            // Crear un menú para que el usuario elija qué información mostrar
-            String[] options = {"Dronedynamics", "Dronetype", "Drone"};
-            int choice = showOptionDialog("Choose Information", "Select the type of information to display:", options);
+            // Show all Dronetype IDs and allow the user to select one.
+            API_dronetypes apiDronetypes = new API_dronetypes();
+            List<Dronetype> dronetypeList = apiDronetypes.dronetype();
+            String[] dronetypeIds = dronetypeList.stream().map(dronetype -> "ID: " + dronetype.getId()).toArray(String[]::new);
+            int dronetypeChoice = showOptionDialog("Choose Dronetype", "Select the Dronetype ID:", dronetypeIds);
 
-            switch (choice) {
-                case 0:
-                    // Obtener datos de Dronedynamics desde la API
+           // Get the Dronetype ID selected by the user
+            int selectedDronetypeId = dronetypeList.get(dronetypeChoice).getId();
+
+           // Ask the user whether to display Dronetype data or select a Drone
+            String[] dronetypeOption = {"Show Dronetype Data", "Select Drone ID"};
+            int dronetypeDecision = showOptionDialog("Dronetype Option", "Choose an option:", dronetypeOption);
+
+            if (dronetypeDecision == 0) {
+                // Display the data of the selected Dronetype
+                showDronetypeData(dronetypeList.get(dronetypeChoice));
+            } else if (dronetypeDecision == 1) {
+                // Load all the drones corresponding to the selected Dronetype
+                API_drones apiDrones = new API_drones();
+                List<Drone> filteredDroneList = apiDrones.drone().stream().filter(drone -> drone.getDronetype().getId() == selectedDronetypeId).toList();
+
+                // Verificar si existen Drones para el Dronetype seleccionado
+                if (filteredDroneList.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "No exist Drones for the selected Dronetype.", "No Drone", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    // Check if Drones exist for the selected Dronetype
+                    String[] droneIds = filteredDroneList.stream().map(drone -> "ID: " + drone.getId()).toArray(String[]::new);
+                    int droneChoice = showOptionDialog("Choose Drone", "Select the Drone ID:", droneIds);
+
+                    // Obtener la ID del Drone seleccionado por el usuario
+                    int selectedDroneId = filteredDroneList.get(droneChoice).getId();
+
+                    // Get the ID of the Drone selected by the user.
                     API_dronedynamics apiDronedynamics = new API_dronedynamics();
-                    List<Dronedynamics> dronedynamicsList = apiDronedynamics.dronedyna();
-                    showObjectInformation(dronedynamicsList, "Dronedynamics Information");
-                    break;
-                case 1:
-                    // Obtener datos de Dronetype desde la API
-                    API_dronetypes apiDronetypes = new API_dronetypes();
-                    List<Dronetype> dronetypeList = apiDronetypes.dronetype();
-                    showObjectInformation(dronetypeList, "Dronetype Information");
-                    break;
-                case 2:
-                    // Obtener datos de Drone desde la API
-                    API_drones apiDrones = new API_drones();
-                    List<Drone> droneList = apiDrones.drone();
-                    showObjectInformation(droneList, "Drone Information");
-                    break;
-                default:
-                    System.out.println("Invalid choice");
-            }
+                    List<Dronedynamics> dronedynamicsList = apiDronedynamics.dronedyna(selectedDroneId);
 
-            // Preguntar al usuario si desea volver al menú principal
-            int option = JOptionPane.showConfirmDialog(null, "Do you want to go back to the main menu?", "Go Back", JOptionPane.YES_NO_OPTION);
-            exit = (option != JOptionPane.YES_OPTION);
+                    // Check if Dronedynamics exists for the selected Drone
+                    if (dronedynamicsList.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "No Dronedynamics exist for the selected Drone.", "No Dronedynamics", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                       // Show the Dronedynamics associated with the selected Drone using the table
+                        showDronedynamicsData(dronedynamicsList);
+                    }
+
+                    exit = true;
+                }
+            }
         } while (!exit);
     }
 
@@ -52,33 +69,22 @@ public class Main {
         );
     }
 
-    private static <T> void showObjectInformation(List<T> objectList, String title) {
-        // Crear una lista de IDs de objetos para que el usuario elija cuál mostrar
-        String[] objectIds = objectList.stream().map(obj -> getIdFromObject(obj)).toArray(String[]::new);
-
-        // Permitir al usuario seleccionar qué objeto mostrar
-        int objectChoice = showOptionDialog(title, "Select the object to display:", objectIds);
-
-        // Mostrar la información completa del objeto seleccionado
-        if (objectChoice >= 0 && objectChoice < objectList.size()) {
-            T selectedObject = objectList.get(objectChoice);
-            showMessageDialog(title, selectedObject.toString());
-        } else {
-            System.out.println("Invalid object choice");
-        }
+    private static void showDronetypeData(Dronetype dronetype) {
+        showMessageDialog("Dronetype Information", dronetype.toString());
     }
 
-    // Método para obtener el ID de un objeto
-    private static <T> String getIdFromObject(T object) {
-        // Llama a la función getId() en cada objeto para obtener su ID
-        try {
-            java.lang.reflect.Method method = object.getClass().getMethod("getId");
-            String id = String.valueOf(method.invoke(object));
-            return "ID: " + id;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Error getting ID";
-        }
+    private static void showDronedynamicsData(List<Dronedynamics> dronedynamicsList) {
+       // Create a Dronedynamics table panel and add it to a dialogue
+        JFrame frame = new JFrame("Dronedynamics Information");
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(800, 600);
+        frame.setLocationRelativeTo(null);
+
+        DroneTablePanel tablePanel = new DroneTablePanel();
+        tablePanel.updateMainTable(dronedynamicsList);
+
+        frame.add(tablePanel);
+        frame.setVisible(true);
     }
 
     private static void showMessageDialog(String title, String message) {

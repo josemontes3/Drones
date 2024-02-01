@@ -1,9 +1,17 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
-public class Dronedynamics extends template{
-    // Attributesextends
-    private int ID;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class Dronedynamics{
+    // Attributes extends
     private String timestamp;
-    private String drone;
+    private String url;
+    private Drone drone;
     private double speed;
     private String alignmentRoll;
     private String controlRange;
@@ -13,32 +21,15 @@ public class Dronedynamics extends template{
     private int batteryStatus;
     private String lastSeen;
     private String status;
-
-    // Constructor without parameters
-    public Dronedynamics() {
-        this.ID = 0;
-        this.timestamp = "";
-        this.drone = "";
-        this.speed = 0;
-        this.alignmentRoll = "";
-        this.controlRange = "";
-        this.alignmentYaw = "";
-        this.longitude = "";
-        this.latitude = "";
-        this.batteryStatus = 0;
-        this.lastSeen = "";
-        this.status = "";
-    }
-
+    private static final String USER_AGENT = "MOzilla FIrefox Awesome version";
+    private static final String TOKEN = "Token bdaf7b42fe5e499577325a6443b1e04f79461592";
 
     // Constructor
-    public Dronedynamics(int ID, String timestamp, String drone, double speed, String alignmentRoll,
+    public Dronedynamics(String timestamp, String url_, double speed, String alignmentRoll,
                          String controlRange, String alignmentYaw, String longitude, String latitude,
                          int batteryStatus, String lastSeen, String status) {
-        this.ID = ID;
         this.timestamp = timestamp;
-        this.drone = drone;
-        this.speed = speed;
+        this.url = url_;
         this.alignmentRoll = alignmentRoll;
         this.controlRange = controlRange;
         this.alignmentYaw = alignmentYaw;
@@ -47,119 +38,121 @@ public class Dronedynamics extends template{
         this.batteryStatus = batteryStatus;
         this.lastSeen = lastSeen;
         this.status = status;
+
+        String drone_ = url_;
+        
+        try{
+            String droneTypeData = datos(drone_);
+
+            try{
+                JSONObject o = new JSONObject(droneTypeData);
+    
+                if (o.has("carriage_type") && o.has("carriage_weight")) {
+                    String carriageType = o.getString("carriage_type");
+                    int carriageWeight = o.getInt("carriage_weight");
+                    int id = o.getInt("id");
+                    String dronetype = o.getString("dronetype");
+                    String created = o.getString("created");
+                    String serialnumber = o.getString("serialnumber");
+
+                    this.drone = new Drone(id , dronetype, serialnumber, created, carriageWeight, carriageType);
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+
     }
 
-    // Getters y setters
 
-    public int getId() {
-        return ID;
+    private static String datos(String url_) throws IOException{
+        HttpURLConnection connection = (HttpURLConnection) new URL(url_).openConnection();
+        connection.setRequestProperty("Authorization", TOKEN);
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("User-Agent", USER_AGENT);
+
+        int responseCode = connection.getResponseCode();
+
+        if (responseCode == HttpURLConnection.HTTP_OK){
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+           
+
+            while((line = reader.readLine()) != null){
+                response.append(line);
+            }
+
+            reader.close();
+
+            return response.toString();
+
+        } else {
+
+            throw new IOException("Error al obtener los datos. Código de estado: " + connection.getResponseCode());
+        }
     }
 
-    /*public void setID(int ID) {
-        this.ID = ID;
-    }*/
+    // Getters
+
 
     public String getTimestamp() {
         return timestamp;
     }
 
-    /*public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }*/
 
-    public String getDrone() {
+    public Drone getDrone() {
         return drone;
     }
 
-    /*public void setDrone(String drone) {
-        this.drone = drone;
-    }*/
 
     public double getSpeed() {
         return speed;
     }
 
-    /*public void setSpeed(double speed) {
-        this.speed = speed;
-    }*/
+    public String getUrl(){
+        return url;
+    }
 
     public String getAlignmentRoll() {
         return alignmentRoll;
     }
 
-    /*public void setAlignmentRoll(String alignmentRoll) {
-        this.alignmentRoll = alignmentRoll;
-    }*/
 
     public String getControlRange() {
         return controlRange;
     }
 
-    /*public void setControlRange(String controlRange) {
-        this.controlRange = controlRange;
-    }*/
 
     public String getAlignmentYaw() {
         return alignmentYaw;
     }
 
-    /*public void setAlignmentYaw(String alignmentYaw) {
-        this.alignmentYaw = alignmentYaw;
-    }*/
 
     public String getLongitude() {
         return longitude;
     }
 
-    /*public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }*/
-
     public String getLatitude() {
         return latitude;
     }
 
-    /*public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }*/
 
     public int getBatteryStatus() {
         return batteryStatus;
     }
 
-    /*public void setBatteryStatus(int batteryStatus) {
-        this.batteryStatus = batteryStatus;
-    }*/
-
     public String getLastSeen() {
         return lastSeen;
     }
-
-    /*public void setLastSeen(String lastSeen) {
-        this.lastSeen = lastSeen;
-    }*/
 
     public String getStatus() {
         return status;
     }
 
-    /*public void setStatus(String status) {
-        this.status = status;
-    }*/
-
-    @Override
-    public String toString() {
-        return  "ID = " + getId() +
-                "\n timestamp = " + getTimestamp() +
-                "\n drone = " + getDrone() +
-                "\n speed = " + getSpeed() +
-                "\n Alignment Roll = " + getAlignmentRoll() +
-                "\n Control Range = " + getControlRange() +
-                "\n Alignment Yaw =" + getAlignmentYaw() +
-                "\n longitude = " + getLongitude() +
-                "\n latitude = " + getLatitude() +
-                "\n batteryStatus = " + getBatteryStatus() +
-                "\n lastSeen = " + getLastSeen() +
-                "\n status = " + getStatus();
-    }
 }

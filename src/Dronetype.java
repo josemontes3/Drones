@@ -1,4 +1,4 @@
-public class Dronetype extends template{
+public class Dronetype{
     //Attributes
     private int idtype;
     private String manufacturer;
@@ -36,75 +36,75 @@ public class Dronetype extends template{
         this.maximumCarriage = maximumCarriage;
     }
 
-    // Getters y setters
+    // Getters
     public int getId() {
         return idtype;
     }
 
-    /*public void setIdtype(int idtype) {
+    public void setId(int idtype) {
         this.idtype = idtype;
-    }*/
+    }
 
     public String getManufacturer() {
         return manufacturer;
     }
 
-    /*public void setManufacturer(String manufacturer) {
+    public void setManufacturer(String manufacturer) {
         this.manufacturer = manufacturer;
-    }*/
+    }
 
     public String getTypeName() {
         return typeName;
     }
 
-    /*public void setTypeName(String typeName) {
+    public void setTypename(String typeName) {
         this.typeName = typeName;
-    }*/
+    }
 
     public int getWeight() {
         return weight;
     }
 
-    /*public void setWeight(int weight) {
+    public void setWeight(int weight) {
         this.weight = weight;
-    }*/
+    }
 
     public int getMaximumSpeed() {
         return maximumSpeed;
     }
 
-    /*public void setMaximumSpeed(int maximumSpeed) {
+    public void setMaximumSpeed(int maximumSpeed) {
         this.maximumSpeed = maximumSpeed;
-    }*/
+    }
 
     public int getBatteryCapacity() {
         return batteryCapacity;
     }
 
-    /*public void setBatteryCapacity(int batteryCapacity) {
+    public void setBatteryCapacity(int batteryCapacity) {
         this.batteryCapacity = batteryCapacity;
-    }*/
+    }
 
     public int getControlRange() {
         return controlRange;
     }
 
-    /*public void setControlRange(int controlRange) {
+    public void setControlRange(int controlRange) {
         this.controlRange = controlRange;
-    }*/
+    }
 
     public int getMaximumCarriage() {
         return maximumCarriage;
     }
 
-    /*public void setMaximumCarriage(int maximumCarriage) {
+    public void setMaximumCarriage(int maximumCarriage) {
         this.maximumCarriage = maximumCarriage;
-    }*/
+    }
 
     //Methods for obtaining all the information about a type of drone
     @Override
     public String toString() {
-    return "ID: " + getId() + 
+    return "DroneType ID: " + getId() + 
             "\nManufacturer: " + getManufacturer() + 
             "\nType Name: " + getTypeName() + 
             "\nWeight: " + getWeight() + " kg" +

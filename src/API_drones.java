@@ -15,7 +15,7 @@ import org.json.JSONTokener;
 public class API_drones {
 
     private static final String USER_AGENT = "MOzilla FIrefox Awesome version";
-    private static final String ENDPOINT_URL = "http://dronesim.facets-labs.com/api/drones/?format=json";
+    private static final String ENDPOINT_URL = "http://dronesim.facets-labs.com/api/drones/?format=json&limit=1000";
     private static final String TOKEN = "Token bdaf7b42fe5e499577325a6443b1e04f79461592";
 
     public List<Drone> drone() {
@@ -57,7 +57,7 @@ public class API_drones {
             e.printStackTrace();
         }
 
-        return new ArrayList<>(); // Devolver una lista vacía en caso de error
+        return new ArrayList<>(); // Return an empty list in case of error
     }
 
     private List<Drone> parseResponse(String input) {
