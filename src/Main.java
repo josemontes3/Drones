@@ -38,6 +38,15 @@ public class Main {
                     // Obtener la ID del Drone seleccionado por el usuario
                     int selectedDroneId = filteredDroneList.get(droneChoice).getId();
 
+                    // Ask the user whether to display Dronetype data or select a Drone
+                    String[] droneOption = {"Show Drone Data", "Show Dronedynamics Data"};
+                    int droneDecision = showOptionDialog("Drone Option", "Choose an option:", droneOption);
+
+                    if (droneDecision == 0) {
+                    // Display the data of the selected Dronetype
+                    showDroneData(filteredDroneList.get(droneChoice));
+                    } else if (droneDecision == 1) {
+
                     // Get the ID of the Drone selected by the user.
                     API_dronedynamics apiDronedynamics = new API_dronedynamics();
                     List<Dronedynamics> dronedynamicsList = apiDronedynamics.dronedyna(selectedDroneId);
@@ -48,6 +57,7 @@ public class Main {
                     } else {
                        // Show the Dronedynamics associated with the selected Drone using the table
                         showDronedynamicsData(dronedynamicsList);
+                    }
                     }
 
                     exit = true;
@@ -71,6 +81,10 @@ public class Main {
 
     private static void showDronetypeData(Dronetype dronetype) {
         showMessageDialog("Dronetype Information", dronetype.toString());
+    }
+
+    private static void showDroneData(Drone drone) {
+        showMessageDialog("Drone Information", drone.toString());
     }
 
     private static void showDronedynamicsData(List<Dronedynamics> dronedynamicsList) {
