@@ -27,7 +27,7 @@ public class Main {
                 API_drones apiDrones = new API_drones();
                 List<Drone> filteredDroneList = apiDrones.drone().stream().filter(drone -> drone.getDronetype().getId() == selectedDronetypeId).toList();
 
-                // Verificar si existen Drones para el Dronetype seleccionado
+               // Check if Drones exist for the selected Dronetype
                 if (filteredDroneList.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "No exist Drones for the selected Dronetype.", "No Drone", JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -35,7 +35,7 @@ public class Main {
                     String[] droneIds = filteredDroneList.stream().map(drone -> "ID: " + drone.getId()).toArray(String[]::new);
                     int droneChoice = showOptionDialog("Choose Drone", "Select the Drone ID:", droneIds);
 
-                    // Obtener la ID del Drone seleccionado por el usuario
+                    // Get the ID of the Drone selected by the user.
                     int selectedDroneId = filteredDroneList.get(droneChoice).getId();
 
                     // Ask the user whether to display Dronetype data or select a Drone

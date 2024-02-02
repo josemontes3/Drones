@@ -31,11 +31,11 @@ public class Drone{
         String droneType = url_;
        
 
+        //read and create the dronetype associated
         try{
             String droneTypeData = datos(droneType);
 
-            
-
+        
             try{
                 JSONObject o = new JSONObject(droneTypeData);
     

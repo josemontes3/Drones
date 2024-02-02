@@ -40,6 +40,8 @@ public class Dronedynamics{
         this.status = status;
 
         String drone_ = url_;
+
+        //read and create the drone associated
         
         try{
             String droneTypeData = datos(drone_);
